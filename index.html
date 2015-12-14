@@ -28,10 +28,25 @@
     </header>
     <div id="view-3d" tabindex="1"></div>
     <div id="panel">
-        <div>
-            <button id="toggleRealistic">Toggle realistic</button>
-            <input id="equation" name="equation" type="text" style="color: black">
-            <button id="setFunction">Set function</button>
+        <div class="row" style="padding: 20px">
+            <button id="playPause" class="floater">Play/pause</button>
+            <button id="toggleRealistic" class="floater">Toggle realistic</button>
+            <button id="waveEquation" class="floater">Wave equation</button>
+            <button id="heatEquation" class="floater">Heat equation</button>
+            <button id="mixEquation" class="floater">Blend</button>
+            <input id="blendFactor" class="floater" style="width: 50px; margin-top: 0">
+            <button id="toggleRealistic" class="floater">Help</button>
+        </div>
+        <div style="height: 300px;">
+        <div class="floater">
+            <div class="lbl">f_0(x):</div>
+            <div class="lbl">f'_0(x):</div>
+        </div>
+        <div class="floater" id="input-column">
+            <input id="equation" name="equation" type="text" style="color: black; float: none"><br>
+            <input id="velocity" name="velocity" type="text" style="color: black; float: none"><br>
+            <button id="setFunction" style="float: none">Update</button>
+        </div>
         </div>
     </div>
 

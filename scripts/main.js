@@ -5,6 +5,8 @@ var canvasHeight = 500;
 var camera, scene, renderer;
 var equationString = "exp(-(x*x+y*y)/50)*12";
 var parsedEquationString = null;
+var velocityString = "0";
+var parsedVelocityString = null;
 var waveShape, cube, plane;
 
 // Parametrics
@@ -56,12 +58,20 @@ var heatWaveFactor = 0.95;
 init();
 animate();
 
+
+// Define a function for placing points
+function pt(x, y, r) {
+    if (x * x + y * y <= r * r) return 1.0;
+    return 0.0;
+}
+
 function initialFunction(x, y) {
+
     return eval(parsedEquationString);
 }
 
 function initialVelocity(x, y) {
-    return 0;
+    return eval(parsedVelocityString);
 }
 
 function initRendering() {
@@ -215,21 +225,27 @@ function init() {
 
 }
 
+function translateEquation(str) {
+    parsed = str.replace(/sin/g, 'Math.sin');
+    parsed = parsed.replace(/cos/g, 'Math.cos');
+    parsed = parsed.replace(/tan/g, 'Math.tan');
+    parsed = parsed.replace(/asin/g, 'Math.asin');
+    parsed = parsed.replace(/acos/g, 'Math.acos');
+    parsed = parsed.replace(/atan/g, 'Math.atan');
+    parsed = parsed.replace(/exp/g, 'Math.exp');
+    parsed = parsed.replace(/pi/g, '3.1415927');
+
+    return parsed;
+}
+
 function setGraphsToInitial() {
 
     heights = [];
     vels = [];
 
     // Parse equation string
-    parsedEquationString = equationString.replace(/sin/g, 'Math.sin');
-    parsedEquationString = parsedEquationString.replace(/cos/g, 'Math.cos');
-    parsedEquationString = parsedEquationString.replace(/tan/g, 'Math.tan');
-    parsedEquationString = parsedEquationString.replace(/asin/g, 'Math.asin');
-    parsedEquationString = parsedEquationString.replace(/acos/g, 'Math.acos');
-    parsedEquationString = parsedEquationString.replace(/atan/g, 'Math.atan');
-    parsedEquationString = parsedEquationString.replace(/exp/g, 'Math.exp');
-    parsedEquationString = parsedEquationString.replace(/pi/g, '3.1415927');
-    console.log(parsedEquationString);
+    parsedEquationString = translateEquation(equationString);
+    parsedVelocityString = translateEquation(velocityString);
 
     var x = 0;
     var y = 0;
@@ -237,7 +253,16 @@ function setGraphsToInitial() {
         eval(parsedEquationString);
     }
     catch (err) {
-        console.log("Not a valid function!");
+        console.log("Not a valid function! Below must be valid javascript:");
+        console.log(parsedEquationString);
+    }
+
+    try {
+        eval(parsedVelocityString);
+    }
+    catch (err) {
+        console.log("Not a valid function! Below must be valid javascript:");
+        console.log(parsedVelocityString);
     }
 
     for (var i = 0; i <= tResolution; i++) {

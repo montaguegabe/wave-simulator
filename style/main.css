@@ -27,12 +27,34 @@ body {
     margin-left: auto;
     margin-right: auto;
     width: 800px;
-    height: 100px;
     background-color: #252525;
 }
 #panel div {
     padding: 10px;
 }
+#panel input {
+    margin-top: 6px;
+    width: 350px;
+    color: black;
+}
 #panel button {
     color: black;
+}
+
+.row {
+    height: 50px;
+}
+
+.floater {
+    float: left;
+}
+
+.lbl {
+    margin: 0px;
+    padding: 0px;
+
+}
+
+#input-column input {
+    margin-bottom: 6px;
 }
