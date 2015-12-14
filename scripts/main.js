@@ -3,7 +3,8 @@ var canvasWidth = 800;
 var canvasHeight = 500;
 
 var camera, scene, renderer;
-var equationString = null;
+var equationString = "exp(-(x*x+y*y)/50)*12";
+var parsedEquationString = null;
 var waveShape, cube, plane;
 
 // Parametrics
@@ -56,41 +57,10 @@ init();
 animate();
 
 function initialFunction(x, y) {
-    // x -= 10;
-    // y += 7;
-
-    if (equationString != null) {
-        return eval(equationString);
-    }
-
-    // Single hump + sine
-    //return Math.exp(-(x*x + y*y) / 50) * 12 + Math.sin(x / 10) * 10;
-
-    // 
-    //return x * y / 50;
-
-    //if (x == 25 && y == 25) {
-    //    return 60; 
-    //}
-    //return 0;
-
-    // Double hump
-    var retValue = Math.exp(-(x*x + y*y) / 50) * 12;
-    x += 25;
-    y -= 7;
-    retValue += Math.exp(-(x*x + y*y) / 35) * 12;
-    return retValue;
-    //return Math.cos(x / 20) * 60;
-    //return Math.sin((x + y) / 20) * 60;
-    //return Math.sin((x) / 10) * 4;
-
-    //if (x > -150 && x < 150 && y > -150 && y < 150) return 80;
-    //else return 0;
+    return eval(parsedEquationString);
 }
 
 function initialVelocity(x, y) {
-    //return Math.exp(-(x*x + y*y) / 1200) * 25;
-    //return Math.sin(x / 20) * 1;
     return 0;
 }
 
@@ -200,10 +170,10 @@ function initRendering() {
                 var tOuNColor = new THREE.Color(0xffffff);
                 var tOuOColor = new THREE.Color(0xffffff);
 
-                tNuNColor.setHSL(newY / 13.0, 0.7, 0.7);
-                tNuOColor.setHSL(yPrevious / 13.0, 0.7, 0.7);
-                tOuNColor.setHSL(geometry.vertices[vInd - uResolution - 1].y / 13.0, 0.7, 0.7);
-                tOuOColor.setHSL(geometry.vertices[vInd - uResolution - 2].y / 13.0, 0.7, 0.7);
+                tNuNColor.setHSL(newY / 11.0, 0.7, 0.7);
+                tNuOColor.setHSL(yPrevious / 11.0, 0.7, 0.7);
+                tOuNColor.setHSL(geometry.vertices[vInd - uResolution - 1].y / 11.0, 0.7, 0.7);
+                tOuOColor.setHSL(geometry.vertices[vInd - uResolution - 2].y / 11.0, 0.7, 0.7);
 
                 f1.vertexColors[0] = f2.vertexColors[0] = tNuNColor;
                 f1.vertexColors[1] = f2.vertexColors[2] = tOuOColor;
@@ -249,6 +219,26 @@ function setGraphsToInitial() {
 
     heights = [];
     vels = [];
+
+    // Parse equation string
+    parsedEquationString = equationString.replace(/sin/g, 'Math.sin');
+    parsedEquationString = parsedEquationString.replace(/cos/g, 'Math.cos');
+    parsedEquationString = parsedEquationString.replace(/tan/g, 'Math.tan');
+    parsedEquationString = parsedEquationString.replace(/asin/g, 'Math.asin');
+    parsedEquationString = parsedEquationString.replace(/acos/g, 'Math.acos');
+    parsedEquationString = parsedEquationString.replace(/atan/g, 'Math.atan');
+    parsedEquationString = parsedEquationString.replace(/exp/g, 'Math.exp');
+    parsedEquationString = parsedEquationString.replace(/pi/g, '3.1415927');
+    console.log(parsedEquationString);
+
+    var x = 0;
+    var y = 0;
+    try {
+        eval(parsedEquationString);
+    }
+    catch (err) {
+        console.log("Not a valid function!");
+    }
 
     for (var i = 0; i <= tResolution; i++) {
         row = new Array();
