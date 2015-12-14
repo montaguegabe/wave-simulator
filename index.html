@@ -5,73 +5,42 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,700italic,300' rel='stylesheet' type='text/css'>
-	<style>
-        header{
-            text-align: center;
-        }
 
-		body {
-			font-family: Monospace;
-			background-color: black;
-			margin: 0px;
-			overflow: hidden;
-            font-family: 'Roboto', sans-serif;
-            color: white;
-		}
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-        #view-3d {
-            display: block;
-            width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        #panel {
-            margin-left: auto;
-            margin-right: auto;
-            width: 800px;
-        }
-	</style>
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" type="text/css" href="style/main.css">
 </head>
 <body>
 
     <header>
-        <h1>Wave Simulator</h1>
-        <h5>Gabe Montague</h5>
+        <h1 style="text-align: left; width: 800px; margin-left: auto; margin-right: auto">
+            <div style="float: left">Wave Simulator</div>
+            <div style="float: right">Gabe Montague</div>
+        </h1>
     </header>
-    <div id="view-3d"></div>
+    <div id="view-3d" tabindex="1"></div>
     <div id="panel">
-        <button id="toggleRealistic">Toggle realistic</button>
-        <input id="equation" name="equation" type="text" style="color: black">
-        <button id="setFunction"></button>
+        <div>
+            <button id="toggleRealistic">Toggle realistic</button>
+            <input id="equation" name="equation" type="text" style="color: black">
+            <button id="setFunction">Set function</button>
+        </div>
     </div>
 
 	<script src="src/three.min.js"></script>
 	<script src="src/renderers/Projector.js"></script>
 	<script src="src/renderers/CanvasRenderer.js"></script>
 	<script src="src/libs/stats.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="scripts/main.js">
-	</script>
-
-    <script>
-        $(document).ready(function() {
-
-            $("#toggleRealistic").click(function(){
-                realistic = !realistic;
-                $("#view-3d").empty();
-                init();
-            });
-
-
-            $("#setFunction").click(function(){
-                equationString = $("#equation").val();
-                console.log(initialFunction);
-                $("#view-3d").empty();
-                init();
-            });
-
-        });
-    </script>
+	<script src="scripts/main.js"></script>
+    <script src="scripts/gui.js"></script>
 
 </body>
 </html>

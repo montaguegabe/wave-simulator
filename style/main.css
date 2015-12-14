@@ -1,0 +1,38 @@
+header{
+    text-align: center;
+    font-weight: 300;
+    height: 50px;
+}
+
+h1 {
+    font-size: 25px;
+}
+
+body {
+    font-family: Monospace;
+    background-color: #111;
+    margin: 0px;
+    color: white;
+}
+
+#view-3d {
+    display: block;
+    width: 800px;
+    height: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #846;
+}
+#panel {
+    margin-left: auto;
+    margin-right: auto;
+    width: 800px;
+    height: 100px;
+    background-color: #252525;
+}
+#panel div {
+    padding: 10px;
+}
+#panel button {
+    color: black;
+}
