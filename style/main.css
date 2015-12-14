@@ -58,3 +58,7 @@ body {
 #input-column input {
     margin-bottom: 6px;
 }
+
+.small-input {
+    width: 80px !important;
+}

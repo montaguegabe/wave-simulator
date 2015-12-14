@@ -7,6 +7,9 @@ var equationString = "exp(-(x*x+y*y)/50)*12";
 var parsedEquationString = null;
 var velocityString = "0";
 var parsedVelocityString = null;
+var stableString = "false"
+var parsedStableString = null;
+
 var waveShape, cube, plane;
 
 // Parametrics
@@ -53,7 +56,7 @@ var modeWave = 0;
 var modeHeat = 1;
 var modeMix = 2;
 var mode = modeMix;
-var heatWaveFactor = 0.95;
+var heatWaveFactor = 0.98;
 
 init();
 animate();
@@ -72,6 +75,13 @@ function initialFunction(x, y) {
 
 function initialVelocity(x, y) {
     return eval(parsedVelocityString);
+}
+
+function stableFunction(i, j) {
+    var x = i * (tMax - tMin) / tResolution + tMin;
+    var y = j * (uMax - uMin) / uResolution + uMin;
+
+    return eval(parsedStableString);
 }
 
 function initRendering() {
@@ -147,8 +157,9 @@ function initRendering() {
     var fInd = 0;
     var newX, newY, newZ;
     var yPrevious = 0;
+    var i = 0;
     for (var t = tMin; t <= tMax + eps; t += tInc) {
-
+        var j = 0;
         for (var u = uMin; u <= uMax + eps; u += uInc) {
 
             newX = xFunction(t, u);
@@ -180,10 +191,18 @@ function initRendering() {
                 var tOuNColor = new THREE.Color(0xffffff);
                 var tOuOColor = new THREE.Color(0xffffff);
 
-                tNuNColor.setHSL(newY / 11.0, 0.7, 0.7);
-                tNuOColor.setHSL(yPrevious / 11.0, 0.7, 0.7);
-                tOuNColor.setHSL(geometry.vertices[vInd - uResolution - 1].y / 11.0, 0.7, 0.7);
-                tOuOColor.setHSL(geometry.vertices[vInd - uResolution - 2].y / 11.0, 0.7, 0.7);
+                if (stableFunction(i, j)) {
+                    tNuNColor.setHSL(0, 0, 0);
+                    tNuOColor.setHSL(0, 0, 0);
+                    tOuNColor.setHSL(0, 0, 0);
+                    tOuOColor.setHSL(0, 0, 0);
+
+                } else {
+                    tNuNColor.setHSL(newY / 11.0, 0.7, 0.7);
+                    tNuOColor.setHSL(yPrevious / 11.0, 0.7, 0.7);
+                    tOuNColor.setHSL(geometry.vertices[vInd - uResolution - 1].y / 11.0, 0.7, 0.7);
+                    tOuOColor.setHSL(geometry.vertices[vInd - uResolution - 2].y / 11.0, 0.7, 0.7);
+                }
 
                 f1.vertexColors[0] = f2.vertexColors[0] = tNuNColor;
                 f1.vertexColors[1] = f2.vertexColors[2] = tOuOColor;
@@ -192,7 +211,9 @@ function initRendering() {
             }
 
             vInd++;
+            j++;
         }
+        i++;
     };
 
     geometry.computeFaceNormals();
@@ -226,7 +247,8 @@ function init() {
 }
 
 function translateEquation(str) {
-    parsed = str.replace(/sin/g, 'Math.sin');
+    parsed = str.replace(/abs/g, 'Math.abs');
+    parsed = parsed.replace(/sin/g, 'Math.sin');
     parsed = parsed.replace(/cos/g, 'Math.cos');
     parsed = parsed.replace(/tan/g, 'Math.tan');
     parsed = parsed.replace(/asin/g, 'Math.asin');
@@ -234,6 +256,9 @@ function translateEquation(str) {
     parsed = parsed.replace(/atan/g, 'Math.atan');
     parsed = parsed.replace(/exp/g, 'Math.exp');
     parsed = parsed.replace(/pi/g, '3.1415927');
+    parsed = parsed.replace(/\sand\s/g, ' && ');
+    parsed = parsed.replace(/\sor\s/g, ' || ');
+    parsed = parsed.replace(/\snot\s/g, ' !');
 
     return parsed;
 }
@@ -246,6 +271,7 @@ function setGraphsToInitial() {
     // Parse equation string
     parsedEquationString = translateEquation(equationString);
     parsedVelocityString = translateEquation(velocityString);
+    parsedStableString = translateEquation(stableString);
 
     var x = 0;
     var y = 0;
@@ -418,6 +444,10 @@ function onDocumentTouchMove( event ) {
 
 function atIndex(array, index1, index2, def) {
 
+    /*if (stableFunction(index1, index2)) {
+        return def;
+    }*/
+
     if (index1 < 0 || index1 >= array.length) {
         return def;
     }
@@ -489,7 +519,8 @@ function animate() {
                     vels[i][j] = (waveVel - heatVel) * heatWaveFactor + heatVel;
                 }
 
-                if (stableBoundary && (i == 0 || j == 0 || i == tResolution || j == uResolution)) {
+                var stableHere = stableFunction(i, j);
+                if (stableBoundary && (i == 0 || j == 0 || i == tResolution || j == uResolution || stableHere)) {
                     vels[i][j] = 0;
                 }
 
@@ -505,11 +536,19 @@ function animate() {
                     var tNuOColor = f2.vertexColors[1];
                     var tOuNColor = f1.vertexColors[2];
 
-                    tOuNColor.setHSL(fd / 11.0, 0.7, 0.7);
-                    tOuOColor.setHSL(f / 11.0, 0.7, 0.7);
-                    tNuOColor.setHSL(fr / 11.0, 0.7, 0.7);
-                    var frd = atIndex(heights, i + 1, j + 1, 0);
-                    tNuNColor.setHSL(frd / 11.0, 0.7, 0.7);
+                    if (!stableHere) {
+                        tOuNColor.setHSL(fd / 11.0, 0.7, 0.7);
+                        tOuOColor.setHSL(f / 11.0, 0.7, 0.7);
+                        tNuOColor.setHSL(fr / 11.0, 0.7, 0.7);
+                        var frd = atIndex(heights, i + 1, j + 1, 0);
+                        tNuNColor.setHSL(frd / 11.0, 0.7, 0.7);
+
+                    } else {
+                        tOuNColor.setHSL(0, 0, 0);
+                        tOuOColor.setHSL(0, 0, 0);
+                        tNuOColor.setHSL(0, 0, 0);
+                        tNuNColor.setHSL(0, 0, 0);
+                    }
 
                     // Face 1 Normal
                     cb.x = 0;

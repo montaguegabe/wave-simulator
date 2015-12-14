@@ -37,16 +37,27 @@
             <input id="blendFactor" class="floater" style="width: 50px; margin-top: 0">
             <button id="toggleRealistic" class="floater">Help</button>
         </div>
-        <div style="height: 300px;">
-        <div class="floater">
-            <div class="lbl">f_0(x):</div>
-            <div class="lbl">f'_0(x):</div>
-        </div>
-        <div class="floater" id="input-column">
-            <input id="equation" name="equation" type="text" style="color: black; float: none"><br>
-            <input id="velocity" name="velocity" type="text" style="color: black; float: none"><br>
-            <button id="setFunction" style="float: none">Update</button>
-        </div>
+        <div style="height: 400px;">
+            <div class="floater">
+                <div class="lbl">f_0(x):</div>
+                <div class="lbl">Enforce zero boundary:</div>
+                <div class="lbl">f'_0(x):</div>
+                <div class="lbl">s: (x,y)->stable?:</div>
+                <div class="lbl">&nbsp;</div>
+                <div class="lbl">Stable boundary:</div>
+                <div class="lbl">Period:</div>
+                <div class="lbl">Heat factor:</div>
+            </div>
+            <div class="floater" id="input-column">
+                <input id="equation" name="equation" type="text" style="color: black; float: none"><br>
+                <input type="checkbox" id="zeroBoundary" name="zeroBoundary" value="true" style="margin: 15px;"><br>
+                <input id="velocity" name="velocity" type="text" style="color: black; float: none"> (for wave equation)<br>
+                <input id="stable" name="stable" type="text" style="color: black; float: none"> (for wave equation)<br>
+                <button id="setFunction" style="margin: 9px;">Set initial from above definitions</button><br>
+                <input type="checkbox" id="stableBoundary" name="stableBoundary" value="true" style="margin: 15px;"><br>
+                <input class="small-input" id="period" name="period" type="text" style="color: black; float: none"> (for wave equation)<br>
+                <input class="small-input" id="heatFactor" name="heatFactor" type="text" style="color: black; float: none"> (for heat equation)<br>
+            </div>
         </div>
     </div>
 
