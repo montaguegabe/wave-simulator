@@ -27,6 +27,35 @@
         </h1>
     </header>
     <div id="view-3d" tabindex="1"></div>
+    <div id="info">
+        <h4>Controls:</h4>
+        <ul>
+            <li>Drag the cursor to orbit the scene above</li>
+            <li>When the 3D is selected use these keys:
+                <ul>
+                    <li><em>Up/down:</em> Zoom in/out</li>
+                    <li><em>Space:</em> Pause/play</li>
+                    <li><em>A:</em> Create droplet randomly</li>
+                    <li><em>S:</em> Tilt (gets rid of waves)</li>
+                </ul>
+            </li>
+        </ul>
+        <h4>Initial parameters:</h4>
+        <ul>
+            <li>f_0(x) is initial function</li>
+            <li>"0 at boundary/stable" specifies that where the function is stable or at the boundaries, the initial function should be overruled to have value 0.</li>
+            <li>f'_0(x) is initial velocity, which is ignored by the heat equation.</li>
+            <li>s: (x,y)->stable? is a function that specifies where the function must be held stable (not including the simulation boundaries, which can be held stable with a following option).</li>
+            <li>"Set initial from above definitions" resets the simulation to the initial conditions above. This updates your changes to the setup.</li>
+        </ul>
+        <h4>Realtime parameters:</h4>
+        <ul>
+            <li>You can adjust these as the simulation is running</li>
+            <li>At the top, you can switch between/realistic normal mode, as well as switch between which equation is being used. "Blend" lerps the velocities together using the factor following the button.</li>
+            <li>Stable boundary indicates whether the rectangular boundary of the simulation should be held still.</li>
+            <li>Finally, you can adjust the period and heat factor, which control how quickly each of the simulations is done. Be careful with your ranges of these.</li>
+        </ul>
+    </div>
     <div id="panel">
         <div class="row" style="padding: 20px">
             <button id="playPause" class="floater">Play/pause</button>
@@ -35,28 +64,37 @@
             <button id="heatEquation" class="floater">Heat equation</button>
             <button id="mixEquation" class="floater">Blend</button>
             <input id="blendFactor" class="floater" style="width: 50px; margin-top: 0">
-            <button id="toggleRealistic" class="floater">Help</button>
+            <button id="helpButton" class="floater">Toggle help</button>
         </div>
         <div style="height: 400px;">
             <div class="floater">
                 <div class="lbl">f_0(x):</div>
-                <div class="lbl">Enforce zero boundary:</div>
+                <div class="lbl">0 at boundary/stable:</div>
                 <div class="lbl">f'_0(x):</div>
                 <div class="lbl">s: (x,y)->stable?:</div>
                 <div class="lbl">&nbsp;</div>
                 <div class="lbl">Stable boundary:</div>
                 <div class="lbl">Period:</div>
                 <div class="lbl">Heat factor:</div>
+                <div class="lbl">Preset:</div>
             </div>
             <div class="floater" id="input-column">
                 <input id="equation" name="equation" type="text" style="color: black; float: none"><br>
                 <input type="checkbox" id="zeroBoundary" name="zeroBoundary" value="true" style="margin: 15px;"><br>
-                <input id="velocity" name="velocity" type="text" style="color: black; float: none"> (for wave equation)<br>
-                <input id="stable" name="stable" type="text" style="color: black; float: none"> (for wave equation)<br>
+                <input id="velocity" name="velocity" type="text" style="color: black; float: none"> (wave equation)<br>
+                <input id="stable" name="stable" type="text" style="color: black; float: none"> (wave equation)<br>
                 <button id="setFunction" style="margin: 9px;">Set initial from above definitions</button><br>
                 <input type="checkbox" id="stableBoundary" name="stableBoundary" value="true" style="margin: 15px;"><br>
-                <input class="small-input" id="period" name="period" type="text" style="color: black; float: none"> (for wave equation)<br>
-                <input class="small-input" id="heatFactor" name="heatFactor" type="text" style="color: black; float: none"> (for heat equation)<br>
+                <input class="small-input" id="period" name="period" type="text" style="color: black; float: none"> (wave equation)<br>
+                <input class="small-input" id="heatFactor" name="heatFactor" type="text" style="color: black; float: none"> (heat equation)<br>
+                <select id="preset" name="preset" style="color: black; margin: 15px">
+                    <option value="default">--</option>
+                    <option value="wave">Normal wave</option>
+                    <option value="heat">Heat</option>
+                    <option value="standingWave">Standing wave 1</option>
+                    <option value="standingWave2">Standing wave 2</option>
+                    <option value="doubleSlit">Double slit</option>
+                </select><br>
             </div>
         </div>
     </div>

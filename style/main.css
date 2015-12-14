@@ -62,3 +62,14 @@ body {
 .small-input {
     width: 80px !important;
 }
+
+#info {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+ul li {
+    margin-top: 10px;
+}

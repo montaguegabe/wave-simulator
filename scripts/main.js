@@ -3,7 +3,7 @@ var canvasWidth = 800;
 var canvasHeight = 500;
 
 var camera, scene, renderer;
-var equationString = "exp(-(x*x+y*y)/50)*12";
+var equationString = "exp(-(x*x+y*y)/20)*12";
 var parsedEquationString = null;
 var velocityString = "0";
 var parsedVelocityString = null;
@@ -18,6 +18,7 @@ var tMin, tMax, tResolution;
 var uMin, uMax, uResolution;
 var heights = new Array();
 var vels = new Array();
+var stables = new Array();
 
 var playing = false;
 var realistic = false;
@@ -55,8 +56,8 @@ var zeroBoundary = false;
 var modeWave = 0;
 var modeHeat = 1;
 var modeMix = 2;
-var mode = modeMix;
-var heatWaveFactor = 0.98;
+var mode = modeWave;
+var heatWaveFactor = 0.995;
 
 init();
 animate();
@@ -191,18 +192,12 @@ function initRendering() {
                 var tOuNColor = new THREE.Color(0xffffff);
                 var tOuOColor = new THREE.Color(0xffffff);
 
-                if (stableFunction(i, j)) {
-                    tNuNColor.setHSL(0, 0, 0);
-                    tNuOColor.setHSL(0, 0, 0);
-                    tOuNColor.setHSL(0, 0, 0);
-                    tOuOColor.setHSL(0, 0, 0);
+                tNuNColor.setHSL(newY / 11.0, 0.7, 0.7);
+                tNuOColor.setHSL(yPrevious / 11.0, 0.7, 0.7);
+                tOuNColor.setHSL(geometry.vertices[vInd - uResolution - 1].y / 11.0, 0.7, 0.7);
+                tOuOColor.setHSL(geometry.vertices[vInd - uResolution - 2].y / 11.0, 0.7, 0.7);
 
-                } else {
-                    tNuNColor.setHSL(newY / 11.0, 0.7, 0.7);
-                    tNuOColor.setHSL(yPrevious / 11.0, 0.7, 0.7);
-                    tOuNColor.setHSL(geometry.vertices[vInd - uResolution - 1].y / 11.0, 0.7, 0.7);
-                    tOuOColor.setHSL(geometry.vertices[vInd - uResolution - 2].y / 11.0, 0.7, 0.7);
-                }
+                if (stables[i][j]) tNuNColor.setHSL(0, 0, 0);
 
                 f1.vertexColors[0] = f2.vertexColors[0] = tNuNColor;
                 f1.vertexColors[1] = f2.vertexColors[2] = tOuOColor;
@@ -248,6 +243,7 @@ function init() {
 
 function translateEquation(str) {
     parsed = str.replace(/abs/g, 'Math.abs');
+    parsed = parsed.replace(/sqrt/g, 'Math.sqrt');
     parsed = parsed.replace(/sin/g, 'Math.sin');
     parsed = parsed.replace(/cos/g, 'Math.cos');
     parsed = parsed.replace(/tan/g, 'Math.tan');
@@ -255,9 +251,12 @@ function translateEquation(str) {
     parsed = parsed.replace(/acos/g, 'Math.acos');
     parsed = parsed.replace(/atan/g, 'Math.atan');
     parsed = parsed.replace(/exp/g, 'Math.exp');
+    parsed = parsed.replace(/max/g, 'Math.max');
+    parsed = parsed.replace(/min/g, 'Math.min');
     parsed = parsed.replace(/pi/g, '3.1415927');
     parsed = parsed.replace(/\sand\s/g, ' && ');
     parsed = parsed.replace(/\sor\s/g, ' || ');
+    parsed = parsed.replace(/\sxor\s/g, ' != ');
     parsed = parsed.replace(/\snot\s/g, ' !');
 
     return parsed;
@@ -267,6 +266,7 @@ function setGraphsToInitial() {
 
     heights = [];
     vels = [];
+    stables = [];
 
     // Parse equation string
     parsedEquationString = translateEquation(equationString);
@@ -294,21 +294,25 @@ function setGraphsToInitial() {
     for (var i = 0; i <= tResolution; i++) {
         row = new Array();
         rowVels = new Array();
+        rowStables = new Array();
         var t = i * (tMax - tMin) / tResolution + tMin;
 
         for (var j = 0; j <= uResolution; j++) {
             var u = j * (uMax - uMin) / uResolution + uMin;
-            if (!zeroBoundary || (i != 0 && j != 0 && i != tResolution && j != uResolution)) {
+            var stableHere = stableFunction(i, j);
+            if (!zeroBoundary || (i != 0 && j != 0 && i != tResolution && j != uResolution && !stableHere)) {
                 row.push(initialFunction(t, u));
                 rowVels.push(initialVelocity(t, u));
             } else {
                 row.push(0);
                 rowVels.push(0);
             }
+            rowStables.push(stableHere);
         };
 
         heights.push(row);
         vels.push(rowVels);
+        stables.push(rowStables);
     }
 }
 
@@ -519,8 +523,8 @@ function animate() {
                     vels[i][j] = (waveVel - heatVel) * heatWaveFactor + heatVel;
                 }
 
-                var stableHere = stableFunction(i, j);
-                if (stableBoundary && (i == 0 || j == 0 || i == tResolution || j == uResolution || stableHere)) {
+                var stableHere = stables[i][j];
+                if (stableBoundary && (i == 0 || j == 0 || i == tResolution || j == uResolution) || stableHere) {
                     vels[i][j] = 0;
                 }
 
@@ -536,18 +540,14 @@ function animate() {
                     var tNuOColor = f2.vertexColors[1];
                     var tOuNColor = f1.vertexColors[2];
 
-                    if (!stableHere) {
-                        tOuNColor.setHSL(fd / 11.0, 0.7, 0.7);
-                        tOuOColor.setHSL(f / 11.0, 0.7, 0.7);
-                        tNuOColor.setHSL(fr / 11.0, 0.7, 0.7);
-                        var frd = atIndex(heights, i + 1, j + 1, 0);
-                        tNuNColor.setHSL(frd / 11.0, 0.7, 0.7);
+                    tOuNColor.setHSL(fd / 11.0, 0.7, 0.7);
+                    tOuOColor.setHSL(f / 11.0, 0.7, 0.7);
+                    tNuOColor.setHSL(fr / 11.0, 0.7, 0.7);
+                    var frd = atIndex(heights, i + 1, j + 1, 0);
+                    tNuNColor.setHSL(frd / 11.0, 0.7, 0.7);
 
-                    } else {
-                        tOuNColor.setHSL(0, 0, 0);
+                    if (stableHere) {
                         tOuOColor.setHSL(0, 0, 0);
-                        tNuOColor.setHSL(0, 0, 0);
-                        tNuNColor.setHSL(0, 0, 0);
                     }
 
                     // Face 1 Normal
@@ -596,6 +596,8 @@ function render() {
 
     theta += (targetRotation - theta) * 0.05;
     phi += (targetRotationUp - phi) * 0.05;
+    if (phi < 0.01) phi = 0.01;
+    if (phi > 3.14) phi = 3.14;
 
     camera.position.x = Math.cos(theta) * Math.sin(phi) * rho;
     camera.position.y = Math.cos(phi) * rho;
