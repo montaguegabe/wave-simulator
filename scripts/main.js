@@ -251,6 +251,7 @@ function translateEquation(str) {
     parsed = parsed.replace(/acos/g, 'Math.acos');
     parsed = parsed.replace(/atan/g, 'Math.atan');
     parsed = parsed.replace(/exp/g, 'Math.exp');
+    parsed = parsed.replace(/pow/g, 'Math.pow');
     parsed = parsed.replace(/max/g, 'Math.max');
     parsed = parsed.replace(/min/g, 'Math.min');
     parsed = parsed.replace(/pi/g, '3.1415927');

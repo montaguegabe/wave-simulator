@@ -113,9 +113,9 @@ $(document).ready(function() {
                 $("#setFunction").trigger("click");
                 break;
             case "doubleSlit":
-                $("#equation").val("abs(x-12)<1.5 and abs(y-7)>0.8 and abs(y+7)>0.8");
+                $("#equation").val("x-=25;y/=4;exp(-(x*x+y*y)/5)*80*sin(x/1.5)");
                 $("#velocity").val("0");
-                $("#stable").val("x-=25;y/=4;exp(-(x*x+y*y)/5)*80*sin(x/1.5)");
+                $("#stable").val("abs(x-12)<1.5 and abs(y-7)>0.8 and abs(y+7)>0.8");
                 $("#zeroBoundary").prop("checked", true);
                 zeroBoundary = true;
                 $("#stableBoundary").prop("checked", false);
