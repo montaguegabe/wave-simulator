@@ -35,7 +35,7 @@ You can adjust these as the simulation is running:
 - Finally, you can adjust the period and heat factor, which control how quickly each of the simulations is done. Be careful with your ranges of these as the simulation can become unstable.
 
 ## Specifying Equations
-- Multiplication must be done explicitly with '*' (as in x*y NOT xy).
+- Multiplication must be done explicitly with `*` (as in `x*y` NOT `xy`).
 - Any javascript expression is a valid equation (don't embed this on websites with sensitive data).
 - Special symbols are: sin, cos, tan, asin, acos, atan, sqrt, abs, exp, pow, max, min, pi, and, or, xor, not.
 - The stable function should return true (1) or false (0) for each position.
